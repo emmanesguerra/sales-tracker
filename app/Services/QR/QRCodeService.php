@@ -42,7 +42,7 @@ class QRCodeService
 
         $ctr = 0;
         foreach ($items as $item) {
-            $qrCode = $writer->writeString($item->id . ' - ' . $item->name);
+            $qrCode = $writer->writeString($item->code . '|' . $item->name);
             $base64QrCode = base64_encode($qrCode);
 
             if($isGrid) {
