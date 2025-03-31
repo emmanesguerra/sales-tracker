@@ -1,7 +1,3 @@
-Certainly! Here's an updated version of your README with a **Tech Stack** section included:
-
----
-
 # Sales Tracker API
 
 **Sales Tracker API** is a Laravel-based backend application that follows the Service-Repository design pattern. This API provides essential features for managing sales records, generating QR codes, uploading CSV data, and more. It supports multi-tenancy using a shared database and shared schema approach, ensuring efficient data management for multiple tenants with a single database.
@@ -12,8 +8,8 @@ Certainly! Here's an updated version of your README with a **Tech Stack** sectio
 - [Tech Stack](#tech-stack)
 - [API Routes](#api-routes)
 - [Folder Structure](#folder-structure)
-- [Usage](#usage)
 - [Architecture](#architecture)
+- [Usage](#usage)
 
 ## Installation
 
