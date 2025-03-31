@@ -40,7 +40,7 @@ To get started with the Sales Tracker API, follow these steps:
    php artisan key:generate
    ```
 
-5. Set up the database:
+5. Set up your database configuration:
 
    - Run migrations:
 
