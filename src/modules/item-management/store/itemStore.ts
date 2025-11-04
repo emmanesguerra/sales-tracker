@@ -42,8 +42,7 @@ export const useItemStore = defineStore('itemStore', {
                 const createdItem = await itemService.createItem(newItemModel);
                 this.items.push(createdItem);
             } catch (error) {
-                console.error('Error creating item:', error);
-                throw new Error('Failed to create item.');
+                throw error;
             }
         },
 
@@ -58,8 +57,7 @@ export const useItemStore = defineStore('itemStore', {
                     this.items[index] = updatedItem;  // Replace the old item with the updated one
                 }
             } catch (error) {
-                console.error('Error updating item:', error);
-                throw new Error('Failed to update item.');
+                throw error;
             }
         },
 
