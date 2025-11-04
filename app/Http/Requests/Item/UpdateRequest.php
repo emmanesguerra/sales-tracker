@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Item;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -21,7 +22,15 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255',
-            'code' => 'sometimes|required|string|max:30|unique:items,code,' . $this->route('item'),
+            'code' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:30',
+                Rule::unique('items', 'code')
+                    ->ignore($this->route('item'))
+                    ->where(fn ($query) => $query->where('tenant_id', auth()->user()->tenant_id))
+            ],
             'description' => 'nullable|string',
             'price' => 'sometimes|required|numeric|min:0',
             'stock' => 'sometimes|required|integer|min:0',
