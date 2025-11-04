@@ -4,19 +4,18 @@
         <v-card class="login-card" elevation="20" width="400">
             <v-card-title class="text-center">Sign Up</v-card-title>
             <v-card-text>
-                <v-form @submit.prevent="handleLogin">
-                    <v-text-field v-model="name" label="Name" type="text" required class="name-field"
-                        :error="!!errorMessage"></v-text-field>
+                <v-form @submit.prevent="handleRegistration">
 
-                    <v-text-field v-model="email" label="Email" type="email" required class="email-field"
-                        :error="!!errorMessage"></v-text-field>
+                    <v-text-field v-model="name" label="Name" :error="!!fieldErrors.name"
+                        :error-messages="fieldErrors.name" required></v-text-field>
 
-                    <v-text-field v-model="password" label="Password" type="password" required class="password-field"
-                        :error="!!errorMessage"></v-text-field>
+                    <v-text-field v-model="email" label="Email" type="email" :error="!!fieldErrors.email"
+                        :error-messages="fieldErrors.email" required :class="{ 'mt-4': !!fieldErrors.email }"></v-text-field>
 
-                    <v-alert v-if="errorMessage" type="error" dense>{{ errorMessage }}</v-alert>
+                    <v-text-field v-model="password" label="Password" type="password" :error="!!fieldErrors.password"
+                        :error-messages="fieldErrors.password" required :class="{ 'mt-4': !!fieldErrors.password }"></v-text-field>
 
-                    <v-btn type="submit" color="primary" block :loading="loading">Submit</v-btn>
+                    <v-btn type="submit" color="primary" block :loading="loading" class="mt-4">Submit</v-btn>
                 </v-form>
 
                 <v-row class="mt-3">
@@ -41,20 +40,32 @@ const email = ref('');
 const password = ref('');
 const loading = ref(false);
 const errorMessage = ref('');
+const fieldErrors = ref<{ [key: string]: string[] }>({});
 const authStore = useAuthStore();
 const router = useRouter();
 
-const handleLogin = async () => {
+const handleRegistration = async () => {
     loading.value = true;
     errorMessage.value = '';
+    fieldErrors.value = {};
 
     try {
         const data = await authService.register(email.value, password.value, name.value);
 
         // Redirect to dashboard after login
         window.location.href = `http://${data.tenant_domain}.${import.meta.env.VITE_APP_DOMAIN}/dashboard`;
-    } catch (error) {
-        errorMessage.value = 'Invalid email or password';
+    } catch (error: any) {
+        // Laravel validation errors
+        if (error.data?.errors) {
+            fieldErrors.value = error.data.errors;
+        }
+
+        // General message
+        if (error.data?.message) {
+            errorMessage.value = error.data.message;
+        } else {
+            errorMessage.value = error.message || 'Something went wrong.';
+        }
     } finally {
         loading.value = false;
     }
