@@ -34,10 +34,10 @@ class AuthService
     public function register(array $data)
     {
         $data['subdomain'] = $this->tenantService->generateSubdomain($data['name']);
-        $tenant = $this->tenantRepository->createTenant($data);
+        $tenant = $this->tenantRepository->create($data);
         
         $data['tenant_id'] = $tenant->id;
-        $user = $this->authRepository->createUser($data);
+        $user = $this->authRepository->create($data);
 
         return [
             'message' => 'User registered successfully',
