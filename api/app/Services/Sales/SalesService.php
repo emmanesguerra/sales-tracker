@@ -54,17 +54,25 @@ class SalesService
         DB::transaction(function () use ($filePath) {
             $records = $this->csvParserService->process($filePath);
 
+            \Log::info('Parsed CSV records:', $records);
+
             foreach ($records as $record) {
-                $item = $this->itemRepository->findOneRecordBy('code', $record['item_code']);
+                $item = $this->itemRepository->findOneRecordBy('code', $record['Item Code']);
 
                 if ($item) {
+                    $orderDate = $record['Date Created'];
+                    $orderTime = $record['Time Created'];
+
+                    $parsedTime = \DateTime::createFromFormat('g:i A', trim($orderTime));
+                    $mysqlTime = $parsedTime ? $parsedTime->format('H:i:s') : null;
+
                     $salesData = [
-                        'order_date'  => $record['order_date'],
-                        'order_time'  => $record['order_time'],
+                        'order_date'  => $orderDate,
+                        'order_time'  => $mysqlTime,
                         'item_id'     => $item->id,
                         'item_price'  => $item->price,
-                        'quantity'    => $record['quantity'],
-                        'total_amount'=> $record['quantity'] * $item->price,
+                        'quantity'    => $record['Quantity'],
+                        'total_amount'=> $record['Quantity'] * $item->price,
                     ];
 
                     // Save the sales order using the SalesRepository
