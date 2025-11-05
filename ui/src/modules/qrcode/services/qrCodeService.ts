@@ -7,12 +7,11 @@ export const qrCodeService = {
             // Use apiRequest for making the API call
             return await apiRequest('/qr-code/generate', {
                 method: 'POST',
-                body: JSON.stringify({ items: formData}), // Include layout in the request
+                body: JSON.stringify({ items: formData }),
             }, 'blob');
 
         } catch (error) {
-            console.error('Error submitting form:', error);
-            throw new Error('Error submitting form to server.');
+            throw error;
         }
     },
 };

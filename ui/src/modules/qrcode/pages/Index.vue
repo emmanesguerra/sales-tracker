@@ -14,9 +14,11 @@
                             </v-radio-group>
 
                             <!-- Multi-Select Dropdown -->
+
                             <v-autocomplete v-model="form.selectedItems" label="Select Items" :items="allItems"
                                 item-title="name" item-value="id" multiple chips clearable
-                                :disabled="selectAll"></v-autocomplete>
+                                :disabled="selectAll"  :error="!!fieldErrors['items.selectedItems']"
+                                :error-messages="fieldErrors['items.selectedItems']"></v-autocomplete>
 
                             <v-card-title>Printing Layout</v-card-title>
 
@@ -50,6 +52,7 @@ const itemStore = useItemStore();
 const { items } = storeToRefs(itemStore);
 const selectAll = ref(false);
 const layout = ref(true);
+const fieldErrors = ref<{ [key: string]: string[] }>({});
 const form = ref({
     selectedItems: [] as number[],
     layout: layout.value,
@@ -77,7 +80,9 @@ const submitForm = async () => {
             selectedItems: form.value.selectedItems,
             isGrid: layout.value, // Pass the selected layout to the service
         };
-        
+
+        fieldErrors.value = {};
+
         const fileBlob = await qrCodeService.submitForm(formData);
 
         // Ensure the file is a valid blob (e.g., a PDF)
@@ -96,8 +101,10 @@ const submitForm = async () => {
 
         // Release the object URL after download to avoid memory leaks
         window.URL.revokeObjectURL(fileURL);
-    } catch (error) {
-        console.error('Error during form submission or file download:', error);
+    } catch (error: any) {
+        if (error.data?.errors) {
+            fieldErrors.value = error.data.errors;
+        }
     }
 };
 </script>
